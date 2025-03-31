@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Model and CSV Viewer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+
+    <!-- Contenedor Principal -->
+    <div class="container">
+        
+        <!-- Primera parte vertical (Archivo CSV y Modelo) -->
+        <div class="section">
+            <h1>ML Model and CSV Viewer</h1>
+
+            <!-- Combo para seleccionar CSV -->
+            <div class="file-selector">
+                <label for="csvFile">Seleccionar archivo CSV:</label>
+                <select id="csvFile" onchange="loadCSV(event)">
+                    <!-- Opciones se llenarán con JavaScript -->
+                </select>
+            </div>
+
+            <!-- Área para mostrar el contenido CSV -->
+            <div id="csvDisplay" class="csv-grid"></div>
+
+            <!-- Combo para seleccionar Modelo de Machine Learning -->
+            <div class="file-selector">
+                <label for="mlModel">Seleccionar modelo:</label>
+                <select id="mlModel" onchange="loadModel(event)">
+                    <!-- Opciones se llenarán con JavaScript -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Segunda parte vertical (Predicción y Gráfico) -->
+        <div class="section">
+            
+            <!-- Primera columna (Predicción) -->
+            <div class="prediction-column">
+                <div class="input-section">
+                    <label for="predictInput">Introduzca datos para predecir:</label>
+                    <input type="text" id="predictInput">
+                    <button id="predictButton" onclick="predictValues()">Predecir</button>
+                </div>
+                <div class="output-section">
+                    <label for="predictionResults">Resultados de Predicción:</label>
+                    <textarea id="predictionResults" rows="10" readonly></textarea>
+                </div>
+            </div>
+
+            <!-- Segunda columna (Gráfico) -->
+            <div class="chart-column">
+                <div id="chart_div"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="controller.js"></script>
+</body>
+</html>
