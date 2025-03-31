@@ -14,31 +14,30 @@
         
         <!-- Primera parte vertical (Archivo CSV y Modelo) -->
         <div class="section">
-            <h1>ML Model and CSV Viewer</h1>
+            <h1>MLearn.js Tester</h1>
 
             <!-- Combo para seleccionar CSV -->
             <div class="file-selector">
-                <label for="csvFile">Seleccionar archivo CSV:</label>
-                <select id="csvFile" onchange="loadCSV(event)">
-                    <!-- Opciones se llenarán con JavaScript -->
-                </select>
+                <label for="csvSelect">Select CSV:</label>
+                <select id="csvSelect" onchange="loadCSV(event)"></select>
+                <button id="openCSVButton">Open your CSV</button>
+                <input type="file" id="csvFileInput" style="display:none;" accept=".csv">
             </div>
 
             <!-- Área para mostrar el contenido CSV -->
             <div id="csvDisplay" class="csv-grid"></div>
+            <br>
 
-            <!-- Combo para seleccionar Modelo de Machine Learning -->
-            <div class="file-selector">
-                <label for="mlModel">Seleccionar modelo:</label>
-                <select id="mlModel" onchange="loadModel(event)">
-                    <!-- Opciones se llenarán con JavaScript -->
-                </select>
-            </div>
+
         </div>
+            <!-- Combo para seleccionar Modelo de Machine Learning -->
 
         <!-- Segunda parte vertical (Predicción y Gráfico) -->
         <div class="section">
-            
+            <div class="file-selector">
+                <label for="mlModel">Select model for training:</label>
+                <select id="mlModel" onchange="loadModel(event)"></select>
+            </div>           
             <!-- Primera columna (Predicción) -->
             <div class="prediction-column">
                 <div class="input-section">

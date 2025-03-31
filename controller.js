@@ -1,6 +1,38 @@
-import { MachineLearningModel } from './model/model.mjs'; // Asumiendo que tienes un archivo de modelo exportado
+//import { MachineLearningModel } from './model/model.mjs'; // Asumiendo que tienes un archivo de modelo exportado
 
 let model;
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Llamar a la función que carga la lista de archivos
+    await loadFileList();
+
+    // Seleccionar el primer archivo automáticamente después de cargar la lista
+    const fileSelect = document.getElementById('csvSelect');
+    
+    // Verificar si hay opciones disponibles
+    if (fileSelect.options.length > 0) {
+        fileSelect.selectedIndex = 0;  // Esto selecciona el primer archivo de la lista
+        fileSelect.dispatchEvent(new Event('change')); // Dispara el evento 'change' para cargar el archivo automáticamente
+    }
+
+    // Agregar el evento change para cargar el archivo seleccionado
+    fileSelect.addEventListener('change', loadCSV);
+
+    // Obtener los elementos del DOM
+    const openCSVButton = document.getElementById('openCSVButton');
+    const csvFileInput = document.getElementById('csvFileInput');
+    
+    // Agregar un evento click al botón para abrir el archivo
+    openCSVButton.addEventListener('click', () => {
+        // Disparar el click del input de archivo oculto
+        csvFileInput.click();
+    });
+    
+    // Agregar un evento change para cuando se seleccione un archivo
+    csvFileInput.addEventListener('change', handleFileSelect);
+
+});
 
 // Obtener la lista de archivos CSV de la carpeta ./csv/ en el repositorio de GitHub
 async function loadFileList() {
@@ -21,12 +53,6 @@ async function loadFileList() {
     }
 }
 
-// Llamada inicial para cargar la lista de archivos CSV al cargar la página
-loadFileList();
-
-// Vincula la función de carga CSV al selector de archivo
-document.getElementById('csvSelect').addEventListener('change', loadCSV);
-
 // Función para cargar y mostrar el CSV en formato tabla
 async function loadCSV() {
     const fileSelect = document.getElementById('csvSelect');
@@ -36,27 +62,75 @@ async function loadCSV() {
         const response = await fetch(url);
         const content = await response.text();
 
-        displayGridCSV(content);
+        displayCSVGrid(content);
     }
+    const csvFileInput = document.getElementById('csvFileInput');
+    csvFileInput.value = ''; 
 }
 
-// Función para mostrar los datos del CSV en una cuadrícula
-function displayCSVGrid(rows) {
-    const csvDisplay = document.getElementById('csvDisplay');
-    csvDisplay.innerHTML = '';  // Limpiar el área anterior
+// Función para mostrar los datos del CSV en una tabla HTML
+function displayCSVGrid(csvContent) {
+    // Dividir el contenido CSV en líneas
+    const rows = csvContent.trim().split('\n').map(row => row.split(','));
+
+    // Verificar si el CSV tiene filas
+    if (rows.length === 0) {
+        alert('El archivo CSV está vacío.');
+        return;
+    }
 
     const table = document.createElement('table');
-    rows.forEach((row, index) => {
+
+    // Crear los encabezados de la tabla
+    const headerRow = rows[0];
+    const thead = document.createElement('thead');
+    const header = document.createElement('tr');
+    headerRow.forEach(headerCell => {
+        const th = document.createElement('th');
+        th.textContent = headerCell.trim();
+        header.appendChild(th);
+    });
+    thead.appendChild(header);
+    table.appendChild(thead);
+
+    // Crear el cuerpo de la tabla
+    const tbody = document.createElement('tbody');
+    rows.slice(1).forEach(row => {
         const tr = document.createElement('tr');
         row.forEach(cell => {
             const td = document.createElement('td');
-            td.textContent = cell;
+            td.textContent = cell.trim();
             tr.appendChild(td);
         });
-        table.appendChild(tr);
+        tbody.appendChild(tr);
     });
-    csvDisplay.appendChild(table);
+
+    table.appendChild(tbody);
+
+    // Limpiar el contenido previo y agregar la nueva tabla
+    const displayDiv = document.getElementById('csvDisplay');
+    displayDiv.innerHTML = ''; // Limpiar el contenido anterior
+    displayDiv.appendChild(table);
 }
+
+
+// Función que maneja la selección del archivo CSV desde el dispositivo del usuario
+function handleFileSelect(event) {
+    const file = event.target.files[0];  // Obtener el archivo seleccionado
+    if (!file) return;  // Si no hay archivo seleccionado, salir
+
+    const reader = new FileReader();  // Crear un lector de archivos
+    reader.onload = function(e) {
+        const content = e.target.result;  // Obtener el contenido del archivo
+        displayCSVGrid(content);  // Pasar el contenido al método para mostrarlo en el grid
+    };
+    reader.readAsText(file);  // Leer el archivo como texto
+
+    const fileSelect = document.getElementById('csvSelect');
+    fileSelect.selectedIndex = -1;  // Desmarcar el select
+}
+
+
 
 // Función para cargar el modelo de Machine Learning
 function loadModel(event) {
