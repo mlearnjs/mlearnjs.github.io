@@ -14,6 +14,11 @@ export const GaussianNB = async () => {
     return GaussianNB;
 };
 
+export const DecisionTreeClassifier = async () => {
+    const { DecisionTreeClassifier } = await import('../src/tree.mjs');
+    return DecisionTreeClassifier;
+};
+
 export const LabelEncoder = async () => {
     const { LabelEncoder } = await import('../src/preprocessing.mjs');
     return LabelEncoder;
