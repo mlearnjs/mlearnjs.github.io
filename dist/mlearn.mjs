@@ -34,6 +34,11 @@ export const zip = async () => {
     return zip;
 };
 
+export const accuracyScore = async () => {
+    const { accuracyScore } = await import('../src/metrics.mjs');
+    return accuracyScore;
+};
+
 
 /*
 export { LinearRegression } from '../src/linear-model.mjs';
