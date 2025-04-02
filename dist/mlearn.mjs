@@ -5,8 +5,8 @@ export const LinearRegression = async () => {
 };
 
 export const PolynomialRegression = async () => {
-    const { LinearRegression } = await import('../src/linear-model.mjs');
-    return LinearRegression;
+    const { PolynomialRegression } = await import('../src/linear-model.mjs');
+    return PolynomialRegression;
 };
 
 export const GaussianNB = async () => {
