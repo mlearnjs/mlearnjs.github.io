@@ -7,14 +7,14 @@ export class GaussianNB {
 
   // Entrenamiento
   fit(X, y) {
-    const classCounts = {};
+    const classCounts = new Map();  // Usamos Map para evitar conversión a cadenas
     const featureSums = {};
     const featureSquaredSums = {};
 
     // Inicializamos las estructuras de datos
     for (let i = 0; i < y.length; i++) {
       const label = y[i];
-      classCounts[label] = (classCounts[label] || 0) + 1;
+      classCounts.set(label, (classCounts.get(label) || 0) + 1);  // Usamos `set` en lugar de asignación directa
       if (!featureSums[label]) {
         featureSums[label] = new Array(X[0].length).fill(0);
         featureSquaredSums[label] = new Array(X[0].length).fill(0);
@@ -28,11 +28,11 @@ export class GaussianNB {
     }
 
     const totalCount = y.length;
-    this.classes = Object.keys(classCounts);
+    this.classes = Array.from(classCounts.keys());  // `keys()` devuelve las clases
 
     // Calculamos la probabilidad de cada clase
     for (const label of this.classes) {
-      this.classProbabilities[label] = classCounts[label] / totalCount;
+      this.classProbabilities[label] = classCounts.get(label) / totalCount;
     }
 
     // Calculamos la media y desviación estándar de las características para cada clase
@@ -41,8 +41,8 @@ export class GaussianNB {
     for (const label of this.classes) {
       this.featureStats[label] = [];
       for (let i = 0; i < X[0].length; i++) {
-        const mean = featureSums[label][i] / classCounts[label];
-        const variance = (featureSquaredSums[label][i] / classCounts[label]) - mean ** 2;
+        const mean = featureSums[label][i] / classCounts.get(label);
+        const variance = (featureSquaredSums[label][i] / classCounts.get(label)) - mean ** 2;
         const stdDev = Math.sqrt(variance);
         this.featureStats[label].push({ mean, stdDev });
       }
@@ -76,6 +76,7 @@ export class GaussianNB {
     });
   }
 }
+
   
 /*
   // Ejemplo de uso
