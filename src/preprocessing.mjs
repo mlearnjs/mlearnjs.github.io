@@ -1,4 +1,4 @@
-class LabelEncoder {
+export class LabelEncoder{
     constructor() {
       this.classes_ = [];
       this.classToIndex = {};
@@ -49,7 +49,8 @@ class LabelEncoder {
       this.fit(y);
       return this.transform(y);
     }
-  }
+}
+
   /*
   // Ejemplo de uso:
   const labels = ["cat", "dog", "fish", "dog", "cat"];

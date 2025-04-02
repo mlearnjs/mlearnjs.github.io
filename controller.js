@@ -1,6 +1,5 @@
-//import { MachineLearningModel } from './model/model.mjs'; // Asumiendo que tienes un archivo de modelo exportado
 
-let model;
+let train = {};
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -9,28 +8,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Seleccionar el primer archivo automáticamente después de cargar la lista
     const fileSelect = document.getElementById('csvSelect');
-    
     // Verificar si hay opciones disponibles
     if (fileSelect.options.length > 0) {
         fileSelect.selectedIndex = 0;  // Esto selecciona el primer archivo de la lista
         fileSelect.dispatchEvent(new Event('change')); // Dispara el evento 'change' para cargar el archivo automáticamente
     }
-
     // Agregar el evento change para cargar el archivo seleccionado
     fileSelect.addEventListener('change', loadCSV);
+
 
     // Obtener los elementos del DOM
     const openCSVButton = document.getElementById('openCSVButton');
     const csvFileInput = document.getElementById('csvFileInput');
-    
     // Agregar un evento click al botón para abrir el archivo
     openCSVButton.addEventListener('click', () => {
         // Disparar el click del input de archivo oculto
         csvFileInput.click();
     });
-    
     // Agregar un evento change para cuando se seleccione un archivo
     csvFileInput.addEventListener('change', handleFileSelect);
+
+
+    // Llenar el select con modelos predeterminados
+    const mlModelSelect = document.getElementById('mlModel');
+    // Aquí defines los modelos manualmente
+    const models = [
+        { value: 'linear-regression', label: 'Linear Regression' }
+    ];
+    // Añadir las opciones al select
+    models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.value;
+        option.textContent = model.label;
+        mlModelSelect.appendChild(option);
+    });
+    // Agregar el evento 'change' al select de modelos
+    //mlModelSelect.addEventListener('change', loadModel);
 
 });
 
@@ -70,14 +83,19 @@ async function loadCSV() {
 
 // Función para mostrar los datos del CSV en una tabla HTML
 function displayCSVGrid(csvContent) {
-    // Dividir el contenido CSV en líneas
-    const rows = csvContent.trim().split('\n').map(row => row.split(','));
+    // Dividir el contenido CSV en líneas y asegurarnos de manejar las comas entre comillas
+    const rows = csvContent.trim().split('\n').map(row => {
+        // Dividir las filas con un método que respeta las comillas
+        return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"|"$/g, '').trim());
+    });
 
     // Verificar si el CSV tiene filas
     if (rows.length === 0) {
         alert('El archivo CSV está vacío.');
         return;
     }
+
+    train = {};
 
     const table = document.createElement('table');
 
@@ -89,7 +107,17 @@ function displayCSVGrid(csvContent) {
         const th = document.createElement('th');
         th.textContent = headerCell.trim();
         header.appendChild(th);
+        train[headerCell] = [];
     });
+
+    // Rellenar las columnas con los valores de las filas
+    rows.slice(1).forEach(row => {
+        row.forEach((cell, index) => {
+            const columnName = headerRow[index];
+            train[columnName].push(cell === '' ? 0 : parseInt(cell));  // Usar null para valores vacíos si se prefiere
+        });
+    });
+
     thead.appendChild(header);
     table.appendChild(thead);
 
@@ -99,8 +127,9 @@ function displayCSVGrid(csvContent) {
         const tr = document.createElement('tr');
         row.forEach(cell => {
             const td = document.createElement('td');
-            td.textContent = cell.trim();
+            td.textContent = cell === '' ? '' : cell.trim();  // Si la celda está vacía, dejémosla vacía
             tr.appendChild(td);
+
         });
         tbody.appendChild(tr);
     });
@@ -111,8 +140,39 @@ function displayCSVGrid(csvContent) {
     const displayDiv = document.getElementById('csvDisplay');
     displayDiv.innerHTML = ''; // Limpiar el contenido anterior
     displayDiv.appendChild(table);
+    fillVariables();
 }
 
+function fillVariables(){
+    // Obtener los selectores de los elementos HTML
+    const featuresSelect = document.getElementById('featuresSelect');
+    const labelSelect = document.getElementById('labelSelect');
+
+    // Obtener las columnas de las características (features) y la etiqueta (label)
+    const columns = Object.keys(train);
+
+    // Poblar el select de "features" con todas las columnas
+    columns.forEach(col => {
+        // Crear una opción para cada columna
+        let option = document.createElement('option');
+        option.value = col; // Valor del nombre de la columna
+        option.textContent = col; // Texto visible para la columna
+
+        // Añadir la opción al select de "features"
+        featuresSelect.appendChild(option);
+    });
+
+    // Poblar el select de "label" con todas las columnas
+    columns.forEach(col => {
+        // Crear una opción para cada columna
+        let option = document.createElement('option');
+        option.value = col; // Valor del nombre de la columna
+        option.textContent = col; // Texto visible para la columna
+
+        // Añadir la opción al select de "label"
+        labelSelect.appendChild(option);
+    });
+}
 
 // Función que maneja la selección del archivo CSV desde el dispositivo del usuario
 function handleFileSelect(event) {
@@ -132,18 +192,6 @@ function handleFileSelect(event) {
 
 
 
-// Función para cargar el modelo de Machine Learning
-function loadModel(event) {
-    const modelFile = event.target.value;
-    if (modelFile) {
-        import(`./model/${modelFile}`)
-            .then(m => {
-                model = m.default; // Asumiendo que el modelo es exportado por defecto
-                console.log("Modelo cargado:", model);
-            })
-            .catch(error => console.error("Error loading model:", error));
-    }
-}
 
 // Función para hacer predicciones
 function predictValues() {
@@ -195,4 +243,68 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 });
+
+
+
+/* Loading Machine Learning Models */
+
+// Función para cargar el modelo de Machine Learning
+function loadModel(event) {
+    const selectedModel = event.target.value;
+}
+
+function getSelectedOptions(selectElement) {
+    const selectedOptions = [];
+    
+    // Verificar si es un select múltiple
+    if (selectElement.multiple) {
+        // Obtener todas las opciones seleccionadas
+        for (const option of selectElement.options) {
+            if (option.selected) {
+                selectedOptions.push(option.value);  // Guardamos el valor de la opción seleccionada
+            }
+        }
+    } else {
+        // Si no es un select múltiple, solo obtenemos la opción seleccionada
+        selectedOptions.push(selectElement.value);
+    }
+    
+    return selectedOptions;
+}
+
+async function fitModel() {
+    const mlModelSelect = document.getElementById('mlModel');
+    const featuresSelect = document.getElementById('featuresSelect');
+    const labelSelect = document.getElementById('labelSelect');
+    const X = getSelectedOptions(featuresSelect);
+    const y = getSelectedOptions(labelSelect); 
+    if (mlModelSelect.value === 'linear-regression'){
+        const { LinearRegression, joinArrays } = await import("/dist/mlearn.mjs");
+
+        const myLinearRegression = await LinearRegression(); 
+        const model = new myLinearRegression();
+        model.fit(train[X[0]], train[y]);
+        console.log(train[X[0]]);
+        console.log(train[y]);
+
+        yPredict = model.predict(train[X[0]])
+
+        const myjoinArrays = await joinArrays();
+        var a = myjoinArrays('x',train[X[0]],'y',train[y],'yPredict',yPredict);
+        console.log(a);
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+        
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(a);
+            var options = {
+                seriesType : 'scatter',
+                series: {1: {type: 'line'}}
+            };  
+            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+            chart.draw(data, options);         
+        }
+    }
+}
+
 

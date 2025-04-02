@@ -18,10 +18,11 @@
 
             <!-- Combo para seleccionar CSV -->
             <div class="file-selector">
-                <label for="csvSelect">Select CSV:</label>
+                <label for="csvSelect">CSV:</label>
                 <select id="csvSelect" onchange="loadCSV(event)"></select>
                 <button id="openCSVButton">Open your CSV</button>
                 <input type="file" id="csvFileInput" style="display:none;" accept=".csv">
+
             </div>
 
             <!-- Área para mostrar el contenido CSV -->
@@ -35,20 +36,34 @@
         <!-- Segunda parte vertical (Predicción y Gráfico) -->
         <div class="section">
             <div class="file-selector">
+ 
                 <label for="mlModel">Select model for training:</label>
-                <select id="mlModel" onchange="loadModel(event)"></select>
+                <select id="mlModel"></select>
+                <button id="fitButton" onclick="fitModel()">Fit Model</button>
+                <!--
+                <button id="predictButton" onclick="predictInput()" disabled>Predict Input</button>
+                -->
             </div>           
             <!-- Primera columna (Predicción) -->
             <div class="prediction-column">
                 <div class="input-section">
-                    <label for="predictInput">Introduzca datos para predecir:</label>
+                    <label for="featuresSelect">Features:</label>
+                    <select id="featuresSelect" multiple size="2"></select>
+                </div>
+                <div class="input-section">
+                    <label for="labelSelect">Label:</label>
+                    <select id="labelSelect"></select>
+                </div> 
+                <!--                                          
+                <div class="input-section">
+                    <label for="predictInput">Input to predict:</label>
                     <input type="text" id="predictInput">
-                    <button id="predictButton" onclick="predictValues()">Predecir</button>
                 </div>
                 <div class="output-section">
                     <label for="predictionResults">Resultados de Predicción:</label>
                     <textarea id="predictionResults" rows="10" readonly></textarea>
                 </div>
+                -->
             </div>
 
             <!-- Segunda columna (Gráfico) -->
