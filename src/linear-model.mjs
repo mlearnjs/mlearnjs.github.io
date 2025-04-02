@@ -48,7 +48,7 @@ export class LinearRegression {
     }
     
 
-    mserror(yTrain, yPredict) {
+    mse(yTrain, yPredict) {
         var mse = 0
         for(var i = 0; i < yTrain.length; i++) {
             mse += Math.pow(yTrain[i]-yPredict[i],2)
@@ -56,7 +56,7 @@ export class LinearRegression {
         return mse / yTrain.length
     }
 
-    coeficientR2(yTrain, yPredict) 
+    r2(yTrain, yPredict) 
     {
         var avg=0;
         var numerator = 0;
@@ -144,7 +144,7 @@ export class PolynomialRegression {
     }
 
     // Error cuadrático medio
-    mserror(yTrain, yPredict) {
+    mse(yTrain, yPredict) {
         let mse = 0;
         for (let i = 0; i < yTrain.length; i++) {
             mse += Math.pow(yTrain[i] - yPredict[i], 2);
@@ -153,7 +153,7 @@ export class PolynomialRegression {
     }
 
     // Coeficiente de determinación R^2
-    coeficientR2(yTrain, yPredict) {
+    r2(yTrain, yPredict) {
         let avg = 0;
         let numerator = 0;
         let denominator = 0;
