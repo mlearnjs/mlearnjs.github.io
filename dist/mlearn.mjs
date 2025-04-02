@@ -4,6 +4,11 @@ export const LinearRegression = async () => {
     return LinearRegression;
 };
 
+export const PolynomialRegression = async () => {
+    const { LinearRegression } = await import('../src/linear-model.mjs');
+    return LinearRegression;
+};
+
 export const GaussianNB = async () => {
     const { GaussianNB } = await import('../src/naive-bayes.mjs');
     return GaussianNB;
