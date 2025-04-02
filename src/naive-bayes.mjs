@@ -51,6 +51,7 @@ export class GaussianNB {
 
   // Función para calcular la probabilidad de que un valor siga una distribución normal
   gaussian(x, mean, stdDev) {
+    stdDev = stdDev === 0 ? 1e-10 : stdDev;
     const exponent = Math.exp(-0.5 * Math.pow((x - mean) / stdDev, 2));
     return (1 / (stdDev * Math.sqrt(2 * Math.PI))) * exponent;
   }

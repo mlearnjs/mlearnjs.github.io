@@ -35,7 +35,7 @@ export class LabelEncoder{
     }
   
     // Transforma las etiquetas numéricas de vuelta a las etiquetas originales
-    inverse_transform(y) {
+    inverseTransform(y) {
       return y.map(index => {
         if (!(index in this.indexToClass)) {
           throw new Error(`Índice "${index}" no encontrado en las clases entrenadas.`);
@@ -45,7 +45,7 @@ export class LabelEncoder{
     }
   
     // Combinación de fit() y transform() en un solo paso
-    fit_transform(y) {
+    fitTransform(y) {
       this.fit(y);
       return this.transform(y);
     }
